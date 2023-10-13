@@ -1,3 +1,9 @@
+import java.util.Properties
+import java.io.FileInputStream
+
+val properties = Properties()
+properties.load(FileInputStream(rootProject.file("local.properties")))
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -18,6 +24,9 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        buildConfigField("String", "BASE_URL", "\"${properties.getProperty("BASE_URL")}\"")
+        buildConfigField("String", "API_KEY", "\"${properties.getProperty("API_KEY")}\"")
     }
 
     buildTypes {
@@ -37,6 +46,7 @@ android {
         jvmTarget = "1.8"
     }
     buildFeatures {
+        android.buildFeatures.buildConfig = true
         compose = true
     }
     composeOptions {
@@ -70,4 +80,21 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
+
+    // viewmodel
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1")
+
+    // Retrofit
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("io.coil-kt:coil-compose:2.4.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+
+    // load image from network
+    implementation("io.coil-kt:coil-compose:2.4.0")
+
+    // navigation in compose
+    implementation("androidx.navigation:navigation-compose:2.5.3")
+
+    // collapsing toolbar compose
+    implementation("me.onebone:toolbar-compose:2.3.5")
 }
