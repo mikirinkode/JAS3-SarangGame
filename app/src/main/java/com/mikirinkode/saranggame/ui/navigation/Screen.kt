@@ -2,6 +2,7 @@ package com.mikirinkode.saranggame.ui.navigation
 
 
 sealed class Screen(val route: String) {
+    object Home: Screen("home")
     object GenreList: Screen("genre")
     object GameList: Screen("game/{genreId}"){
         fun createRoute(genreId: Int) = "game/$genreId"

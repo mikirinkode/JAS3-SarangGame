@@ -1,5 +1,10 @@
 package com.mikirinkode.saranggame.ui.screen
 
+import android.util.Log
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -33,6 +38,59 @@ class GameViewModel(
         MutableStateFlow(UiState.Loading)
     val gameState: StateFlow<UiState<Game>> get() = _gameState
 
+//    private val _isShowGameList: MutableStateFlow<Boolean> = MutableStateFlow(false)
+//    val isShowGameList: StateFlow<Boolean> get() = _isShowGameList
+
+
+    // STATE FOR LIST_AND_DETAIL LAYOUT
+    private val _isShowGameDetail: MutableState<Boolean> = mutableStateOf(false)
+    val isShowGameDetail: Boolean get() = _isShowGameDetail.value
+
+    // STATE FOR LIST ONLY LAYOUT
+    private val _currentScreen: MutableState<GameScreenType> = mutableStateOf(GameScreenType.GENRE_LIST)
+    val currentScreen: GameScreenType get() = _currentScreen.value
+
+    fun showGameDetail() {
+        _isShowGameDetail.value = true
+    }
+
+    fun hideGameDetail() {
+        _isShowGameDetail.value = false
+    }
+
+    private val _genreId: MutableState<Int> = mutableIntStateOf(-1)
+    val genreId: Int get() = _genreId.value
+
+    private val _gameId: MutableState<Int> = mutableIntStateOf(-1)
+    val gameId: Int get() = _gameId.value
+
+    fun onBackClicked(){
+        when(currentScreen){
+            GameScreenType.GENRE_LIST -> {}
+            GameScreenType.GAME_LIST -> {
+                _currentScreen.value = GameScreenType.GENRE_LIST
+            }
+            GameScreenType.GAME_DETAIL -> {
+                _currentScreen.value = GameScreenType.GAME_LIST
+            }
+        }
+    }
+
+    fun onGenreClicked(newGenreId: Int) {
+        _isShowGameDetail.value = false
+        _currentScreen.value = GameScreenType.GAME_LIST
+
+        _genreId.value = newGenreId
+        getGameListByGenreId(genreId)
+    }
+
+    fun onGameClicked(newGameId: Int){
+        _isShowGameDetail.value = true
+        _currentScreen.value = GameScreenType.GAME_DETAIL
+
+        _gameId.value = newGameId
+        getGameDetail(newGameId)
+    }
 
     fun getGenreList() {
         viewModelScope.launch {
@@ -40,6 +98,12 @@ class GameViewModel(
 
             try {
                 val result = gameRepository.getGenreList()
+                Log.e(TAG, "on finish get genre List")
+                Log.e(TAG, "genre id: ${genreId}")
+                if (genreId == -1) {
+                    _genreId.value = result.first().id ?: 4
+                    getGameListByGenreId(genreId)
+                }
                 _genreListState.value = UiState.Success(result)
             } catch (e: Exception) {
                 _genreListState.value = UiState.Error("Error: ${e.message}")
@@ -48,6 +112,8 @@ class GameViewModel(
     }
 
     fun getGameListByGenreId(genreId: Int) {
+        Log.e(TAG, "getGameListByGenreId called")
+        Log.e(TAG, "getGameListByGenreId genre id: ${genreId}")
         viewModelScope.launch {
             _gameListState.value = UiState.Loading
 
@@ -74,6 +140,7 @@ class GameViewModel(
     }
 
     companion object {
+        private const val TAG = "GameViewModel"
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val application =
@@ -83,4 +150,8 @@ class GameViewModel(
             }
         }
     }
+}
+
+enum class GameScreenType {
+    GENRE_LIST, GAME_LIST, GAME_DETAIL
 }

@@ -97,4 +97,7 @@ dependencies {
 
     // collapsing toolbar compose
     implementation("me.onebone:toolbar-compose:2.3.5")
+
+    // to get the window size for adaptive layout
+    implementation("androidx.compose.material3:material3-window-size-class")
 }

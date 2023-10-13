@@ -48,6 +48,7 @@ import com.mikirinkode.saranggame.R
 import com.mikirinkode.saranggame.data.response.Genre
 import com.mikirinkode.saranggame.ui.components.MessageCard
 import com.mikirinkode.saranggame.ui.theme.Dark50
+import com.mikirinkode.saranggame.utils.ContentLayoutType
 import com.mikirinkode.saranggame.utils.UiState
 import me.onebone.toolbar.CollapsingToolbarScaffold
 import me.onebone.toolbar.ScrollStrategy
@@ -56,6 +57,7 @@ import java.text.DecimalFormat
 
 @Composable
 fun GameDetailScreen(
+    contentLayoutType: ContentLayoutType,
     viewModel: GameViewModel,
     gameId: Int,
     onShareClick : (String) -> Unit,
@@ -97,6 +99,7 @@ fun GameDetailScreen(
                     val rating = DecimalFormat("#.#").format(it.rating?.times(2))
                     val description = Html.fromHtml(it.description ?: "").toString()
                     DetailContent(
+                        contentLayoutType = contentLayoutType,
                         title = it.name ?: "",
                         description = description,
                         releaseDate = it.released ?: "",
@@ -128,6 +131,7 @@ fun GameDetailScreen(
 
 @Composable
 fun DetailContent(
+    contentLayoutType: ContentLayoutType,
     title: String,
     description: String,
     releaseDate: String,
@@ -193,23 +197,25 @@ fun DetailContent(
                         }
                     }
                 }
-                Box(
-                    modifier = Modifier
-                        .pin()
-                        .padding(8.dp)
-                        .background(
-                            color = Color.Black,
-                            shape = MaterialTheme.shapes.small
-                        )
-                        .align(Alignment.CenterStart)
-                ) {
-                    IconButton(onClick = navigateBack) {
-                        Icon(
-                            imageVector = Icons.Rounded.ArrowBack,
-                            contentDescription = "Back Button",
-                            tint = Color.White,
-                            modifier = Modifier.size(24.dp)
-                        )
+                if (contentLayoutType == ContentLayoutType.LIST_ONLY){
+                    Box(
+                        modifier = Modifier
+                            .pin()
+                            .padding(8.dp)
+                            .background(
+                                color = Color.Black,
+                                shape = MaterialTheme.shapes.small
+                            )
+                            .align(Alignment.CenterStart)
+                    ) {
+                        IconButton(onClick = navigateBack) {
+                            Icon(
+                                imageVector = Icons.Rounded.ArrowBack,
+                                contentDescription = "Back Button",
+                                tint = Color.White,
+                                modifier = Modifier.size(24.dp)
+                            )
+                        }
                     }
                 }
             }
