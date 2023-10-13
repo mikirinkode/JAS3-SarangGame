@@ -181,7 +181,8 @@ fun DetailContent(
                             .background(color = MaterialTheme.colorScheme.background)
                             .fillMaxWidth()
                             .height(300.dp)
-                            .clip(CutCornerShape(bottomStart = 64.dp))
+                            .clip(CutCornerShape(bottomStart = 64.dp)),
+                        placeholder = painterResource(id = R.drawable.ic_more)
                     )
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),

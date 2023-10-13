@@ -3,6 +3,7 @@ package com.mikirinkode.saranggame
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -13,6 +14,7 @@ import androidx.navigation.navArgument
 import com.mikirinkode.saranggame.ui.navigation.Screen
 import com.mikirinkode.saranggame.ui.screen.GameDetailScreen
 import com.mikirinkode.saranggame.ui.screen.GameListScreen
+import com.mikirinkode.saranggame.ui.screen.GameViewModel
 import com.mikirinkode.saranggame.ui.screen.GenreListScreen
 
 @Composable
@@ -22,7 +24,7 @@ fun MainApp(
 ) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navController?.currentDestination?.route
-
+    val viewModel: GameViewModel = viewModel(factory = GameViewModel.Factory)
 
     NavHost(
         navController = navController,
@@ -30,6 +32,7 @@ fun MainApp(
     ) {
         composable(Screen.GenreList.route) {
             GenreListScreen(
+                viewModel = viewModel,
                 onGenreClicked = { genreId ->
                     navController.navigate(Screen.GameList.createRoute(genreId = genreId))
                 }
