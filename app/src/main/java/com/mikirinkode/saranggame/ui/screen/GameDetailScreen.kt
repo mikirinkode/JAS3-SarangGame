@@ -50,6 +50,7 @@ import com.mikirinkode.saranggame.ui.components.MessageCard
 import com.mikirinkode.saranggame.ui.theme.Dark50
 import com.mikirinkode.saranggame.utils.ContentLayoutType
 import com.mikirinkode.saranggame.utils.UiState
+import com.mikirinkode.saranggame.utils.Utils
 import me.onebone.toolbar.CollapsingToolbarScaffold
 import me.onebone.toolbar.ScrollStrategy
 import me.onebone.toolbar.rememberCollapsingToolbarScaffoldState
@@ -292,7 +293,7 @@ fun DetailContent(
                                         fontSize = 12.sp,
                                     )
                                     Text(
-                                        text = releaseDate,
+                                        text = Utils.formatReleaseDate(releaseDate),
                                         color = Color.White,
                                         fontSize = 16.sp,
                                     )

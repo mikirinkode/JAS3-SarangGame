@@ -60,7 +60,7 @@ fun HomeScreen(
                     modifier = Modifier.weight(1f)
                 )
                 Box(
-                    modifier = Modifier.weight(3f)
+                    modifier = Modifier.weight(4f)
                 ) {
                     if (viewModel.isShowGameDetail) {
                         GameDetailScreen(

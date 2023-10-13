@@ -1,6 +1,8 @@
 package com.mikirinkode.saranggame.utils
 
 import com.mikirinkode.saranggame.data.response.Genre
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 object Utils {
     fun formatNumberToK(number: Int): String {
@@ -17,5 +19,13 @@ object Utils {
         genres?.forEach { genreList.add(it?.name ?: "") }
         result = genreList.joinToString(separator = ", ")
         return result
+    }
+
+    fun formatReleaseDate(releaseDate: String): String {
+        val inputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val outputFormat = SimpleDateFormat("EEEE, d MMMM yyyy", Locale.getDefault())
+
+        val date = inputFormat.parse(releaseDate)
+        return outputFormat.format(date)
     }
 }
