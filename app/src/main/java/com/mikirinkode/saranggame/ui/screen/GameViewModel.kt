@@ -60,6 +60,19 @@ class GameViewModel(
         }
     }
 
+    fun getGameDetail(gameId: Int) {
+        viewModelScope.launch {
+            _gameState.value = UiState.Loading
+
+            try {
+                val result = gameRepository.getGameDetail(gameId.toString())
+                _gameState.value = UiState.Success(result)
+            } catch (e: Exception) {
+                _gameState.value = UiState.Error("Error: ${e.message}")
+            }
+        }
+    }
+
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {

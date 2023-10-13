@@ -63,6 +63,7 @@ fun MainApp(
         ) { entry ->
             val gameId = entry.arguments?.getInt("gameId") ?: 1
             GameDetailScreen(
+                viewModel = viewModel,
                 gameId = gameId,
                 onShareClick = {},
                 openWebsite = {},

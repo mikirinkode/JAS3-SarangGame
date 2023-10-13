@@ -19,6 +19,7 @@ import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowBack
+import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -26,6 +27,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,16 +38,15 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.mikirinkode.saranggame.R
-import com.mikirinkode.saranggame.data.GenreModel
+import com.mikirinkode.saranggame.data.response.Genre
+import com.mikirinkode.saranggame.ui.components.MessageCard
 import com.mikirinkode.saranggame.ui.theme.Dark50
 import com.mikirinkode.saranggame.utils.UiState
 import me.onebone.toolbar.CollapsingToolbarScaffold
@@ -55,6 +56,7 @@ import java.text.DecimalFormat
 
 @Composable
 fun GameDetailScreen(
+    viewModel: GameViewModel,
     gameId: Int,
     onShareClick : (String) -> Unit,
     openWebsite : (String) -> Unit,
@@ -62,70 +64,66 @@ fun GameDetailScreen(
     modifier: Modifier = Modifier
 ) {
 
-    val context = LocalContext.current
-//    val viewModel: GameViewModel =
-//        viewModel(factory = ViewModelFactory.getInstance(context))
-
     var isFavorite by remember {
         mutableStateOf(false)
     }
 
-    DetailContent(
-        title = "Cyberpunk",
-        description = "Lorem Ipsum",
-        releaseDate = "13 Februari 199",
-        rating = "2",
-        genres = listOf(GenreModel()),
-        website = "web",
-        imageUrl = "https://media.rawg.io/media/games/26d/26d4437715bee60138dab4a7c8c59c92.jpg",
-        isFavorite = isFavorite,
-        onFavoriteClick = {
-            isFavorite = !isFavorite
-
-        },
-        onShareClick = onShareClick,
-        openWebsite = openWebsite,
-        navigateBack = navigateBack
-    )
-
-//    viewModel.gameDetailState.collectAsState(initial = UiState.Loading).value.let { uiState ->
-//        when (uiState) {
-//            is UiState.Loading -> {
-//                viewModel.getGameDetail(gameId.toString())
-//            }
-//            is UiState.Success -> {
-//                uiState.data.let {
-//                    val genres = it.genres ?: listOf()
-//                    val rating = DecimalFormat("#.#").format(it.rating?.times(2))
-//                    val description = Html.fromHtml(it.description ?: "").toString()
-//                    DetailContent(
-//                        title = it.name ?: "",
-//                        description = description,
-//                        releaseDate = it.released ?: "",
-//                        rating = rating,
-//                        genres = genres,
-//                        website = it.website ?: "",
-//                        imageUrl = it.backgroundImage ?: "",
-//                        isFavorite = isFavorite,
-//                        onFavoriteClick = {
-//                            isFavorite = !isFavorite
+//    DetailContent(
+//        title = "Cyberpunk",
+//        description = "Lorem Ipsum",
+//        releaseDate = "13 Februari 199",
+//        rating = "2",
+//        genres = listOf(GenreModel()),
+//        website = "web",
+//        imageUrl = "https://media.rawg.io/media/games/26d/26d4437715bee60138dab4a7c8c59c92.jpg",
+//        isFavorite = isFavorite,
+//        onFavoriteClick = {
+//            isFavorite = !isFavorite
 //
-//                        },
-//                        onShareClick = onShareClick,
-//                        openWebsite = openWebsite,
-//                        navigateBack = navigateBack
-//                    )
-//                }
-//            }
-//            is UiState.Error -> {
-//                MessageCard(
-//                    icon = Icons.Rounded.Warning,
-//                    title = "Terjadi Masalah.",
-//                    description = "Maaf terjadi masalah, silahkan periksa koneksi internet anda."
-//                )
-//            }
-//        }
-//    }
+//        },
+//        onShareClick = onShareClick,
+//        openWebsite = openWebsite,
+//        navigateBack = navigateBack
+//    )
+
+    viewModel.gameState.collectAsState(initial = UiState.Loading).value.let { uiState ->
+        when (uiState) {
+            is UiState.Loading -> {
+                viewModel.getGameDetail(gameId)
+            }
+            is UiState.Success -> {
+                uiState.data.let {
+                    val genres = it.genres ?: listOf()
+                    val rating = DecimalFormat("#.#").format(it.rating?.times(2))
+                    val description = Html.fromHtml(it.description ?: "").toString()
+                    DetailContent(
+                        title = it.name ?: "",
+                        description = description,
+                        releaseDate = it.released ?: "",
+                        rating = rating,
+                        genres = genres,
+                        website = it.website ?: "",
+                        imageUrl = it.backgroundImage ?: "",
+                        isFavorite = isFavorite,
+                        onFavoriteClick = {
+                            isFavorite = !isFavorite
+
+                        },
+                        onShareClick = onShareClick,
+                        openWebsite = openWebsite,
+                        navigateBack = navigateBack
+                    )
+                }
+            }
+            is UiState.Error -> {
+                MessageCard(
+                    icon = Icons.Rounded.Warning,
+                    title = "Terjadi Masalah.",
+                    description = "Maaf terjadi masalah, silahkan periksa koneksi internet anda."
+                )
+            }
+        }
+    }
 }
 
 @Composable
@@ -134,7 +132,7 @@ fun DetailContent(
     description: String,
     releaseDate: String,
     rating: String,
-    genres: List<GenreModel>,
+    genres: List<Genre>,
     website: String,
     imageUrl: String,
     isFavorite: Boolean,
