@@ -41,19 +41,29 @@ fun MainApp(
 
         composable(
             route = Screen.GameList.route,
-            arguments = listOf(navArgument("genreId") { type = NavType.StringType })
-        ) {
+            arguments = listOf(navArgument("genreId") { type = NavType.IntType })
+        ) { entry ->
+            val genreId = entry.arguments?.getInt("genreId") ?: 1
             GameListScreen(
+                viewModel = viewModel,
+                genreId = genreId,
                 onBackClicked = { navController.navigateUp() },
-                onGameClicked = { gameId -> navController.navigate(Screen.GameDetail.createRoute(gameId = gameId)) })
+                onGameClicked = { gameId ->
+                    navController.navigate(
+                        Screen.GameDetail.createRoute(
+                            gameId = gameId
+                        )
+                    )
+                })
         }
 
         composable(
             route = Screen.GameDetail.route,
-            arguments = listOf(navArgument("gameId") { type = NavType.StringType })
-        ) {
+            arguments = listOf(navArgument("gameId") { type = NavType.IntType })
+        ) { entry ->
+            val gameId = entry.arguments?.getInt("gameId") ?: 1
             GameDetailScreen(
-                gameId = 0,
+                gameId = gameId,
                 onShareClick = {},
                 openWebsite = {},
                 navigateBack = {

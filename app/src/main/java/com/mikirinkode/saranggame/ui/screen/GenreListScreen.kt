@@ -49,7 +49,7 @@ import com.mikirinkode.saranggame.utils.Utils
 @Composable
 fun GenreListScreen(
     viewModel: GameViewModel,
-    onGenreClicked: (genreId: String) -> Unit,
+    onGenreClicked: (genreId: Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -62,7 +62,6 @@ fun GenreListScreen(
         Box(
             modifier = Modifier.fillMaxSize()
         ) {
-
             viewModel.genreListState.collectAsState(UiState.Loading).value.let { state ->
                 when (state) {
                     is UiState.Loading -> {
@@ -86,7 +85,7 @@ fun GenreListScreen(
 @Composable
 fun GenreList(
     list: List<Genre>,
-    onGenreClicked: (genreId: String) -> Unit,
+    onGenreClicked: (genreId: Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -100,7 +99,7 @@ fun GenreList(
                 totalGames = genre.gamesCount ?: 0,
                 onGenreClicked = {
                     val genreId = genre.id ?: 1
-                    onGenreClicked(genreId.toString())
+                    onGenreClicked(genreId)
                 }
             )
         }
@@ -154,22 +153,28 @@ fun GenreCompactCard(
                     placeholder = painterResource(id = R.drawable.ic_more)
                 )
                 Spacer(modifier = Modifier.width(16.dp))
-                Text(
-                    name,
-                    modifier = Modifier,
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = MaterialTheme.colorScheme.primary
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    "(${Utils.formatNumberToK(totalGames)} Games)",
-                    modifier = Modifier,
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Normal,
-                    overflow = TextOverflow.Ellipsis
-                )
-                Spacer(modifier = Modifier.width(8.dp))
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        name,
+                        modifier = Modifier,
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        "(${Utils.formatNumberToK(totalGames)} Games)",
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Normal,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier
+                            .padding(end = 8.dp)
+                            .fillMaxWidth(),
+                    )
+                }
             }
         }
     }

@@ -47,6 +47,19 @@ class GameViewModel(
         }
     }
 
+    fun getGameListByGenreId(genreId: Int) {
+        viewModelScope.launch {
+            _gameListState.value = UiState.Loading
+
+            try {
+                val result = gameRepository.getGameList(genreId.toString())
+                _gameListState.value = UiState.Success(result)
+            } catch (e: Exception) {
+                _gameListState.value = UiState.Error("Error: ${e.message}")
+            }
+        }
+    }
+
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
